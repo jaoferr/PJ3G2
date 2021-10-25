@@ -1,2 +1,1 @@
-# PJ3G2
-# Machine Learning applied to Business Data
+# PJ3G2: Machine Learning applied to Business Data
