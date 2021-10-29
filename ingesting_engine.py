@@ -54,7 +54,7 @@ class IngestingEngine:
             parsed_file = parsing_method(file)                               # ex: pdf = tika
             # simple cleaning
             parsed_file = parsed_file.lower().replace('\n', '').strip()
-            texts.append(parsed_file)
+            texts.append((file, parsed_file))
 
         return texts
 
@@ -73,7 +73,7 @@ class IngestingEngine:
     def pickle_texts(self, pickle_name='ingested'):
         output_filename = pickle_name + '.pickle'
         with open(output_filename, 'wb') as output_file:
-            pickle.dump(data, output_file)
+            pickle.dump(self.texts, output_file)
 
         print(f'Output save as pickle: "{output_filename}"')
 
