@@ -2,15 +2,33 @@ import pickle
 import csv
 import re
 import glob
+import string
+import nltk
+from nltk.corpus import stopwords
 
 
 class ProcessingEngine:
     ''' Also doubles as a bad recommending engine '''
 
-    def __init__(self):
+    def __init__(self, lang):
         print('\nStarting processing engine...')
-        self.job_descriptions = []
+        # self.job_descriptions = []
 
+        # this should be in a config file, not inside the code
+        self.supported_languages = {
+            'en': 'english'
+        }
+        if lang not in self.supported_languages:
+            print('Language not supported, default to "en"')
+        else:
+            self.lang = lang
+
+        self.load_stopwords()
+
+    def load_stopwords(self):
+        nltk.download('stopwords', quiet=True)  # this will probably mess stuff up
+        self.stopwords = nltk.corpus.stopwords.words(self.supported_languages[self.lang])
+    
     def load_keywords(self, file_path):
         print(f'{"Loading keywords":<50}', end='', flush=False)
         with open(file_path, 'r', encoding='utf-8-sig') as file:
@@ -36,24 +54,23 @@ class ProcessingEngine:
                 string = row.strip().lower()
                 job += ' ' + string
 
-        job = job.strip()
-        self.job_description = job
-        self.job_descriptions.append(job)
+        self.original_job_description = job
         print('Done')
 
-    def load_job_descriptions(self, folder_path):
-        '''
-        Receives a folder path with multiple text files,
-        each with a job description
-        currently not in use
-        '''
-        files = glob.glob(folder_path + '/*.txt')
-        jobs = []
-        for file in files:
-            job = self.load_job_description(file)
+    def process_job_description(self):
+        print(f'{"Processing job description":<50}', end='', flush=False)
+        job = self.original_job_description.strip()
+        job = job.translate(str.maketrans('', '', string.punctuation))  # remove punctiation (),.!
+        
+        pattern = re.compile(r'\b{}\b'.format(r'\b|\b'.join(self.stopwords)))  # remove stopwords from nltk module
+        job = pattern.sub('', job)
+    
+        self.job_description = job
+        self.keywords = [word for word in job.split()]
+        print('Done')
 
     def load_resumes(self, resumes):
-        # for now, we pickle
+        # for now, pickle
         self.resumes = resumes
 
     def build_pattern(self):
@@ -65,7 +82,20 @@ class ProcessingEngine:
 
     def match_keywords(self):
         self.build_pattern()
-        print(f'\n{"Matching":<50}', end='', flush=False)
+        print(f'\n{"Matching with keywords":<50}', end='', flush=False)
+        resume_matches = []
+        for resume_path, resume in self.resumes:
+            matches = self.pattern.findall(resume)
+            resume_matches.append((resume_path, matches))
+
+        self.matches = resume_matches
+        print('Done')
+        return resume_matches
+
+    def match_job_description(self):
+        self.process_job_description()
+        self.build_pattern()
+        print(f'\n{"Matching with job description":<50}', end='', flush=False)
         resume_matches = []
         for resume_path, resume in self.resumes:
             matches = self.pattern.findall(resume)

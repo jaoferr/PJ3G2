@@ -21,9 +21,11 @@ if __name__ == '__main__':
     data_path = open('ingested.pickle', 'rb')
     data = pickle.load(data_path)
 
-    processing_engine = ProcessingEngine()  # class instance
+    processing_engine = ProcessingEngine('en')  # class instance
     processing_engine.load_keywords(en_keywords_path)  # keywords
     processing_engine.load_job_description(job_description_path)  # job desc
     processing_engine.load_resumes(data)  # data = texts from ingesting engine
-    processing_engine.match_keywords()  # loop through all resumes and get their scores
+    # processing_engine.match_keywords()  # loop through all resumes and get their scores using given keywords
+    # kw = processing_engine.get_best_resumes()  # return best scores
+    processing_engine.match_job_description()  # uses given job description
     k = processing_engine.get_best_resumes()  # return best scores
