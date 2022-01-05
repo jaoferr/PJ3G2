@@ -238,30 +238,5 @@ class GraceApp:
 
 
 if __name__ == '__main__':
-    # raw_resumes = os.path.join('Resume&Job_Description\Original_Resumes', '')
-    # raw_job_descriptions = 'Resume&Job_Description\Job_Description\oaktree.txt'
-    
-    # g = GraceApp()
-    # g.print_name()
-    # g.start_engines('pdf', 'en')
-
-    # # ingesting
-    # print('\nIngesting')
-    # resumes = g.ingesting.process_folder(raw_resumes)
-    # job_description = g.ingesting.load_job_description(raw_job_descriptions)
-    # # processing
-    # print('\nProcessing')
-    # g.processing.load_resumes(resumes)
-    # g.processing.load_job_description(job_description)
-
-    # processed_resumes = g.processing.process_resumes()
-    # processed_job_description = g.processing.process_job_description()
-    # # recommending
-    # print('\nRecommending')
-    # g.recommending.load_resumes(processed_resumes)
-    # g.recommending.load_job_description(processed_job_description)
-    # g.recommending.run_steps()
-    # final_scores = g.recommending.get_scores()
-    # pprint(final_scores)
     g = GraceApp()
     g.root.mainloop()
