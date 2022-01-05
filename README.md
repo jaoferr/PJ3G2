@@ -1,13 +1,13 @@
 # PJ3G2: GRACE
-  Resume recommending system (sort of)
+  Sistema de recomendação de currículos
 
-## Instructions
-   - Create a virtual environment and activate it
+## Instruções
+   - Crie um novo ambiente virtual e o ative
    - ```pip install -r requirements.txt```
-   - Run ``` app.py ```
+   - Execute a ferramenta com ```python app.py ```
 
-## To do list
-   - Language support
-   - Add predefined keywords
-   - Add support for image PDFs
-   - Add support for more file extensions (.docx)
+## A fazer
+   - Suporte a línguas
+   - Adicionar palavras chaves predefinidas
+   - Adicionar suporte a PDFs de imagens
+   - Adicionar suporte a outras extensões de arquivos (.docx)
