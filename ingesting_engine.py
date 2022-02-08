@@ -74,8 +74,8 @@ class IngestingEngine:
 
     def pickle_resumes(self, pickle_name='ingested_resumes'):
         print(f'{"Saving ingested resumes":<50}', end='', flush=False)
-        output_filename = pickle_name + '.pickle'
-        with open('pickle_dev\\' + output_filename, 'wb') as output_file:
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
+        with open(output_filename, 'wb') as output_file:
             pickle.dump(self.texts, output_file)
 
         print(f'"{output_filename}"')
@@ -94,18 +94,19 @@ class IngestingEngine:
         return job
 
     def pickle_job_description(self, pickle_name='ingested_job_description'):
-        print(f'{"Saving ingested job description":<50}', end='', flush=False)
-        output_filename = 'pickle_dev\\' + pickle_name + '.pickle'
+        print(f'{"Saving ingested job description":<50}', end='', flush=False)        
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
         with open(output_filename, 'wb') as output_file:
             pickle.dump(self.original_job_description, output_file)
 
         print(f'"{output_filename}"')
 
 if __name__ == '__main__':
-    folder = os.path.join('Resume&Job_Description\Original_Resumes', '')
+    folder = os.path.join('..', 'Resume&Job_Description', 'Original_Resumes')
     ingesting_engine = IngestingEngine(verbose=1)
     resumes = ingesting_engine.process_folder(folder)
-    job_description = ingesting_engine.load_job_description('Resume&Job_Description\Job_Description\oaktree.txt')
+    job_description_path = os.path.join('..', 'Resume&Job_Description', 'Job_Description', 'oaktree.txt')
+    job_description = ingesting_engine.load_job_description(job_description_path)
     
     # pickles
     ingesting_engine.pickle_resumes()
