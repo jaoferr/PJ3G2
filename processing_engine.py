@@ -23,6 +23,7 @@ class ProcessingEngine:
         }
         if lang not in self.supported_languages:
             print('Language not supported, default to "en"')
+            self.lang = 'en'
         else:
             self.lang = lang
 
