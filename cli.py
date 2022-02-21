@@ -1,14 +1,13 @@
 from ingesting_engine import IngestingEngine
 from processing_engine import ProcessingEngine
 from recommending_engine import RecommendingEngine
-import os
 import argparse
 
 def main(
     resume_dir_path: str,
     job_desc_file_path: str,
     language: str
-):
+    ):
     ingesting = IngestingEngine()
     processing = ProcessingEngine(language)
     recommending = RecommendingEngine()
@@ -19,8 +18,8 @@ def main(
 
     # processing
     print('\nProcessing')
-    processing.load_job_description(raw_job_description)
-    processing.load_resumes(raw_resumes)
+    processing.load_job_description(raw_job_description, is_pickle=False)
+    processing.load_resumes(raw_resumes, is_pickle=False)
     
     job_description = processing.process_job_description()
     resumes = processing.process_resumes()

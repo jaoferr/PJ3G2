@@ -50,7 +50,7 @@ class ProcessingEngine:
     def set_job_description(self, description):
         self.job_description = description
 
-    def load_job_description(self, job_description: string, is_pickle: bool=True):
+    def load_job_description(self, job_description: string, is_pickle: bool=False):
         if is_pickle:
             self.original_job_description = pickle.load(open(job_description, 'rb'))
         else:
@@ -71,7 +71,7 @@ class ProcessingEngine:
         print('Done')
         return self.job_description
 
-    def load_resumes(self, resumes: string, is_pickle: bool=True):
+    def load_resumes(self, resumes: string, is_pickle: bool=False):
         if is_pickle:
             self.original_resumes = pickle.load(open(resumes, 'rb'))
         else:

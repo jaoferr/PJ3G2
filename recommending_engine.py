@@ -115,7 +115,8 @@ class RecommendingEngine:
 
         return best_n_resumes
 
-    def copy_best_n_resumes(self, best_resumes: list, n: int=5, destination_folder: str='./best_n_matches/'):
+    def copy_best_n_resumes(self, best_resumes: list, n: int=5, 
+                            destination_folder: str=os.path.join('.', 'best_n_matches', '')):
         if os.path.exists(destination_folder):
             shutil.rmtree(destination_folder)
         
