@@ -1,3 +1,4 @@
+import os
 import pickle
 import csv
 import re
@@ -22,6 +23,7 @@ class ProcessingEngine:
         }
         if lang not in self.supported_languages:
             print('Language not supported, default to "en"')
+            self.lang = 'en'
         else:
             self.lang = lang
 
@@ -48,11 +50,11 @@ class ProcessingEngine:
     def set_job_description(self, description):
         self.job_description = description
 
-    def load_job_description(self, job_description):
-        self.original_job_description = job_description
-
-    def load_job_description_pickle(self, pickle_file):
-        self.original_job_description = pickle.load(open(pickle_file, 'rb'))
+    def load_job_description(self, job_description: string, is_pickle: bool=False):
+        if is_pickle:
+            self.original_job_description = pickle.load(open(job_description, 'rb'))
+        else:
+            self.original_job_description = job_description
 
     def process_job_description(self):
         print(f'{"Processing job description":<50}', end='', flush=False)
@@ -69,11 +71,11 @@ class ProcessingEngine:
         print('Done')
         return self.job_description
 
-    def load_resumes(self, resumes):
-        self.original_resumes = resumes
-
-    def load_resumes_pickle(self, pickle_file):
-        self.original_resumes = pickle.load(open(pickle_file, 'rb'))
+    def load_resumes(self, resumes: string, is_pickle: bool=False):
+        if is_pickle:
+            self.original_resumes = pickle.load(open(resumes, 'rb'))
+        else:
+            self.original_resumes = resumes
 
     def process_resumes(self):
         print(f'{"Processing resumes":<50}')
@@ -88,7 +90,7 @@ class ProcessingEngine:
             resume = pattern.sub('', resume)
 
             self.processed_resumes.append((file_path, resume))
-        
+
         return self.processed_resumes
 
     def run_engine(self):  # combined methods
@@ -101,7 +103,7 @@ class ProcessingEngine:
     # pickle for debugging
     def pickle_job_description(self, pickle_name='processed_job_description'):
         print(f'{"Saving processed job description":<50}', end='', flush=False)
-        output_filename = 'pickle_dev\\' + pickle_name + '.pickle'
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
         with open(output_filename, 'wb') as output_file:
             pickle.dump(self.job_description, output_file)
 
@@ -109,23 +111,23 @@ class ProcessingEngine:
 
     def pickle_resumes(self, pickle_name='processed_resumes'):
         print(f'{"Saving processed resumes":<50}', end='', flush=False)
-        output_filename = 'pickle_dev\\' + pickle_name + '.pickle'
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
         with open(output_filename, 'wb') as output_file:
             pickle.dump(self.processed_resumes, output_file)
 
         print(f'"{output_filename}"')
 
 if __name__ == '__main__':
-    job_description_path = 'ingested_job_description.pickle'
-    resume_path = 'ingested_resumes.pickle'
+    job_description_path = os.path.join('pickle_dev', 'ingested_job_description.pickle')
+    resume_path = os.path.join('pickle_dev', 'ingested_resumes.pickle')
 
     processing_engine = ProcessingEngine('en')  # class instance
     
     
     # load from pickle
     # processing_engine.load_keywords(en_keywords_path)  # keywords
-    processing_engine.load_job_description_pickle(job_description_path)
-    processing_engine.load_resumes_pickle(resume_path)
+    processing_engine.load_job_description(job_description_path, is_pickle=True)
+    processing_engine.load_resumes(resume_path, is_pickle=True)
     
     # process stuff
     job_description = processing_engine.process_job_description()

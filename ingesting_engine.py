@@ -1,24 +1,36 @@
 import glob
 import os
-from tika import parser
+from tika import tika, parser
 import time
 import pickle
+import urllib.request
 
 
 class IngestingEngine:
 
     @staticmethod
     def process_file_tika(filename):
-        ''' Process pdf file with tika '''
+        ''' Process PDF file with tika '''
         parsed_pdf = parser.from_file(filename)
         data = parsed_pdf['content']
         return data
 
-    def __init__(self, extension=False, verbose=0):
+    def __init__(self, extension=False, verbose=0, use_tika_server: bool=True, tika_server_endpoint: str='http://localhost:9998'):
         self.verbose = verbose  # controls log output
         self.supported_extensions = {
             'pdf': IngestingEngine.process_file_tika
         }
+        if use_tika_server:
+            try:
+                tika_endpoint_status = urllib.request.urlopen(tika_server_endpoint).status
+            except:
+                tika_endpoint_status = 404
+
+            if tika_endpoint_status == 200:
+                tika.TIKA_SERVER_ENDPOINT = tika_server_endpoint
+                print(f'Using Tika server at endpoint "{tika_server_endpoint}".')
+            else:
+                print(f'Tika server is not running at endpoint "{tika_server_endpoint}". Using self contained server.')
 
         if not extension:
             print('Starting ingesting engine, using default file extension (.pdf).')
@@ -74,8 +86,8 @@ class IngestingEngine:
 
     def pickle_resumes(self, pickle_name='ingested_resumes'):
         print(f'{"Saving ingested resumes":<50}', end='', flush=False)
-        output_filename = pickle_name + '.pickle'
-        with open('pickle_dev\\' + output_filename, 'wb') as output_file:
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
+        with open(output_filename, 'wb') as output_file:
             pickle.dump(self.texts, output_file)
 
         print(f'"{output_filename}"')
@@ -94,18 +106,19 @@ class IngestingEngine:
         return job
 
     def pickle_job_description(self, pickle_name='ingested_job_description'):
-        print(f'{"Saving ingested job description":<50}', end='', flush=False)
-        output_filename = 'pickle_dev\\' + pickle_name + '.pickle'
+        print(f'{"Saving ingested job description":<50}', end='', flush=False)        
+        output_filename = os.path.join('pickle_dev', pickle_name + '.pickle')
         with open(output_filename, 'wb') as output_file:
             pickle.dump(self.original_job_description, output_file)
 
         print(f'"{output_filename}"')
 
 if __name__ == '__main__':
-    folder = os.path.join('Resume&Job_Description\Original_Resumes', '')
-    ingesting_engine = IngestingEngine(verbose=1)
+    folder = os.path.join('..', 'Resume&Job_Description', 'Original_Resumes')
+    ingesting_engine = IngestingEngine(verbose=1, use_tika_server=True)
     resumes = ingesting_engine.process_folder(folder)
-    job_description = ingesting_engine.load_job_description('Resume&Job_Description\Job_Description\oaktree.txt')
+    job_description_path = os.path.join('..', 'Resume&Job_Description', 'Job_Description', 'oaktree.txt')
+    job_description = ingesting_engine.load_job_description(job_description_path)
     
     # pickles
     ingesting_engine.pickle_resumes()

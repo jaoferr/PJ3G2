@@ -1,3 +1,5 @@
+import os
+import shutil
 import pickle
 import nltk
 import nltk.tokenize
@@ -6,6 +8,7 @@ from collections import Counter
 import Levenshtein
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+
 
 class RecommendingEngine:
 
@@ -101,21 +104,34 @@ class RecommendingEngine:
         self.final_scores = final_scores
         return final_scores
 
-    def get_five_best_scores(self):
+    def get_n_best_scores(self, n: int=5):
         ordered_scores = list(sorted(self.final_scores.items(), key=lambda item: item[1]))
-        best_five_scores = ordered_scores[::-1][:5]
-        best_five_resumes = []
-        for resume, score in best_five_scores:
-            best_five_resumes.append(resume)
+        best_n_scores = ordered_scores[::-1][:n]
+        best_n_resumes = []
+        for resume, score in best_n_scores:
+            best_n_resumes.append(resume)
             resume_name = resume.split('/')[-1]
             print(f'{resume_name}: {score}')
 
-        return best_five_resumes
+        return best_n_resumes
+
+    def copy_best_n_resumes(self, best_resumes: list, n: int=5, 
+                            destination_folder: str=os.path.join('.', 'best_n_matches', '')):
+        if os.path.exists(destination_folder):
+            shutil.rmtree(destination_folder)
+        
+        os.makedirs(destination_folder)
+
+        for rank, resume in enumerate(best_resumes[:n]):
+            filename_destination = f'{str(rank + 1)}. {resume.split(os.path.sep)[-1]}'
+            shutil.copy(resume, os.path.join(destination_folder, filename_destination))
+        
+        print(f'Copied best {n} resumes to {destination_folder}')
 
 
 if __name__ == '__main__':
-    resumes = 'pickle_dev\processed_resumes.pickle'
-    job_description = 'pickle_dev\processed_job_description.pickle'
+    resumes = os.path.join('pickle_dev', 'processed_resumes.pickle')
+    job_description = os.path.join('pickle_dev', 'processed_job_description.pickle')
 
     recommending_engine = RecommendingEngine()
     recommending_engine.load_job_description_pickle(job_description)
@@ -123,5 +139,6 @@ if __name__ == '__main__':
 
     scores = recommending_engine.run_steps()
     final_scores = recommending_engine.get_scores()
-    best_five = recommending_engine.get_five_best_scores()
-    print(1)
+    best_five = recommending_engine.get_n_best_scores(n=5)
+    recommending_engine.copy_best_n_resumes(best_five)
+    print('\n', 1)

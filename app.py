@@ -1,16 +1,14 @@
-from ingesting_engine import IngestingEngine
-from processing_engine import ProcessingEngine
-from recommending_engine import RecommendingEngine
 import os
-from pprint import pprint
 import time
 import tkinter as tk
 import tkinter.filedialog
-from ttkthemes import ThemedTk
 import sys
+from ingesting_engine import IngestingEngine
+from processing_engine import ProcessingEngine
+from recommending_engine import RecommendingEngine
+from ttkthemes import ThemedTk
 
 class StdoutRedirector(object):
-    ''' https://stackoverflow.com/questions/18517084/how-to-redirect-stdout-to-a-tkinter-text-widget '''
     def __init__(self,text_widget):
         self.text_space = text_widget
 
@@ -19,7 +17,6 @@ class StdoutRedirector(object):
         self.text_space.see('end')
 
     def flush(self):
-        # hey, this one is on me
         pass
 
 class GraceApp:
