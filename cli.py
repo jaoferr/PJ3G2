@@ -1,6 +1,6 @@
-from ingesting_engine import IngestingEngine
-from processing_engine import ProcessingEngine
-from recommending_engine import RecommendingEngine
+from engines.ingesting_engine import IngestingEngine
+from engines.processing_engine import ProcessingEngine
+from engines.recommending_engine import RecommendingEngine
 import argparse
 
 def main(
