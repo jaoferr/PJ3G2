@@ -15,3 +15,10 @@ class Config(object):
     # tika server
     TIKA_SERVER_ENDPOINT = os.environ.get('TIKA_SERVER_ENDPOINT') or 'http://localhost:9998'
     
+    # mongodb, document database
+    MONGODB_URI = os.environ.get('MONGODB_URI') or 'mongodb://localhost:27017/'
+
+    MONGODB_SETTINGS = {
+        'db': 'grace',
+        'host': MONGODB_URI
+    }
