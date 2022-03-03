@@ -1,5 +1,6 @@
-from flask import jsonify, request, url_for, abort
+from flask import jsonify, request
 from app.api import blueprint
+from app.api.auth import token_auth
 from app.models import Resume, ResumeIndex
 from app import db
 from bson.objectid import ObjectId
@@ -11,14 +12,8 @@ import app.api.errors as api_errors
 def documents(hash: str):
     pass
 
-@blueprint.route('/resumes/show/', methods=['GET'])
-# @token_auth.login_required
-def get_n_documents():
-    n = request.args.get('n', type=int) or 5
-    response = Resume.objects().limit(n)
-    return jsonify(response)
-
-@blueprint.route('/resumes/', methods=['GET'])
+@blueprint.route('/resumes', methods=['GET'])
+@token_auth.login_required
 def get_resume():
     object_id = request.args.get('resume_id', type=str)
     print(object_id)
@@ -29,7 +24,8 @@ def get_resume():
     return jsonify(result)
 
 
-@blueprint.route('/resumes/', methods=['POST'])
+@blueprint.route('/resumes', methods=['POST'])
+@token_auth.login_required
 def insert_resume():
     data = request.get_json() or {}
     if 'content' not in data:
