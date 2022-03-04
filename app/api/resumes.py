@@ -8,10 +8,6 @@ from hashlib import md5
 
 import app.api.errors as api_errors
 
-# @blueprint.route('/documents/<document_hash:str>', methods=['GET'])
-def documents(hash: str):
-    pass
-
 @blueprint.route('/resumes', methods=['GET'])
 @token_auth.login_required
 def get_resume():
@@ -58,3 +54,25 @@ def insert_resume():
         })
 
     return response
+
+from zipfile import ZipFile
+
+@blueprint.route('/resumes/zip', methods=['POST'])
+def show_binary():
+    if 'file' not in request.files:
+        return api_errors.bad_request('no file was uploaded')
+    file = request.files['file']
+    if file.content_type != 'application/zip':
+        return api_errors.bad_request('file extension is not allowed')
+
+    response = {'content-type': request.content_type}   
+    if file:
+        # ingest_status = IngestingEngine.ingest(file)  # ingest, add to db
+        # response['status'] = ingest_status
+
+        zip_file = ZipFile(file)
+        files = {i: file for i, file in enumerate(zip_file.namelist())}
+        response['file-type'] = str(file.content_type)
+        response['files'] = files
+
+    return jsonify(response)

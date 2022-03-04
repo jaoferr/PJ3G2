@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
+from flask_restful import Api
 from typing import cast
 from typings.sql_alchemy import SQLAlchemy as SQLAlchemyStub
 
@@ -18,6 +19,7 @@ db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login = LoginManager()
 document_db = MongoEngine()
+api = Api()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -27,12 +29,10 @@ def create_app(config_class=Config):
     document_db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    api.init_app(app)
 
-    from app.api import blueprint as api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/api')
-
-    from app.main import blueprint as main_blueprint
-    app.register_blueprint(main_blueprint)
+    # from app.api import blueprint as api_blueprint
+    # app.register_blueprint(api_blueprint, url_prefix='/api')
 
     return app
 

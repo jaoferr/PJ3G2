@@ -22,3 +22,11 @@ class Config(object):
         'db': 'grace',
         'host': MONGODB_URI
     }
+
+    # ingesting engine
+    INGESTING_ALLOWED_CONTENT_TYPES = [
+        'application/zip'
+    ]
+    INGESTING_ALLOWED_EXTENSIONS = [
+        '.pdf', '.docx', '.jpeg'
+    ]
