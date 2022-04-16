@@ -1,0 +1,30 @@
+grace/
+    app/
+        api/
+            __init__.py
+            resources/
+                resumes.py
+                users.py
+                tokens.py
+                auth.py
+        engines/
+            ingesting/
+                ingest.py
+                [...]
+            processing/
+                process.py
+                [...]
+            recommending/
+                recommend.py
+                [...]
+        models.py
+        tasks.py*
+    migrations/
+        [...]
+    tests/
+        [...]
+    typings/
+        sqlalchemy.py
+
+    grace.py
+    config.py
